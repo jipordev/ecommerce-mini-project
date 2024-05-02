@@ -9,6 +9,10 @@
 # testing
 /coverage
 
+# ignore environment variable
+.env.development
+.env.*
+
 # next.js
 /.next/
 /out/
