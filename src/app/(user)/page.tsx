@@ -36,15 +36,13 @@ export default function Home() {
                     <>
                         <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                             {products.map((product: ProductType) => (
-                                <Link href={`/product/${product.id}/`} key={product.id}>
-                                    <CardProduct
-                                        key={product.id}
-                                        id={product.id}
-                                        name={product.name} // Assuming product title is the name
-                                        price={product.price}
-                                        image={product.image}
-                                    />
-                                </Link>
+                                <CardProduct
+                                    key={product.id}
+                                    id={product.id}
+                                    name={product.name} // Assuming product title is the name
+                                    price={product.price}
+                                    image={product.image}
+                                />
                             ))}
                         </div>
                         {/* Render pagination */}

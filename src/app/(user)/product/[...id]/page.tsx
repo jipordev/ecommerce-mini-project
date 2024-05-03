@@ -25,7 +25,7 @@ function DetailPage({ params }: ParamProps) {
     if (!product) return <div>No product found.</div>;
 
     return (
-        <main className="bg-[whitesmoke]">
+        <main>
             <section className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-2 container-sm mx-[20px] sm:mx-[50px] md:mx-[80px] lg:mx-[150px] my-12">
                 <div className="w-[350px] mx-auto sm:w-[300px] md:w-[400px] lg:w-[500px] h-auto">
                     <Image src={product.image} className="rounded-md shadow-md" alt={product.name} width={500} height={500} />

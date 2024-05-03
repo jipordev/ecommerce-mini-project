@@ -1,3 +1,4 @@
+'use client'
 import { Card } from "flowbite-react";
 import {CartProductType, ProductType} from "@/lib/defination";
 import Image from "next/image";
@@ -5,10 +6,14 @@ import { FaCartPlus } from "react-icons/fa6";
 import {useAppDispatch} from "@/redux/hooks";
 import {increment} from "@/redux/features/counter/counterSlice";
 import {addToCart} from "@/redux/features/cart/cartSlice";
+import Link from "next/link";
+import {useGetProductsQuery} from "@/redux/service/product";
+import {useRouter} from "next/navigation";
 
 export default function CardProduct({id, name, price,image, onClick}: CartProductType) {
 
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const handleAddToCart = () => {
         dispatch(increment());
@@ -23,11 +28,11 @@ export default function CardProduct({id, name, price,image, onClick}: CartProduc
                 <Image height={1000} width={1000} alt="" src={image} className="h-[210px] object-cover overflow-hidden"/>
             )}
         >
-            <a href="#">
+            <Link href="#">
                 <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                     {name}
                 </h5>
-            </a>
+            </Link>
             <div className="flex items-center justify-between">
                 <span className="text-sm font-normal tracking-wider text-gray-900 dark:text-white">${price}</span>
                 <span className='flex justify-center items-center'>
@@ -36,7 +41,9 @@ export default function CardProduct({id, name, price,image, onClick}: CartProduc
                     </button>
                 </span>
             </div>
-
+            <button onClick={() => router.push(`/product/${id}`)}>
+                Details
+            </button>
         </Card>
     );
 }
