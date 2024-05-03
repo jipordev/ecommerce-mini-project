@@ -36,7 +36,7 @@ export default function Home() {
                     <>
                         <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                             {products.map((product: ProductType) => (
-                                <Link href={`/${product.id}/`} key={product.id}>
+                                <Link href={`/product/${product.id}/`} key={product.id}>
                                     <CardProduct
                                         key={product.id}
                                         id={product.id}
