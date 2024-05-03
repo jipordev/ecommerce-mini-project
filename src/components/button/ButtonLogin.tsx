@@ -1,8 +1,12 @@
 import React from 'react';
+import {useRouter} from "next/navigation";
 
 const ButtonLogin = () => {
+
+    const router = useRouter();
+
     return (
-        <button className='text-normal font-semibold px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded-lg'>
+        <button onClick={()=> router.push("/login")} className='text-[14px] font-semibold px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded-lg'>
             Login
         </button>
     );

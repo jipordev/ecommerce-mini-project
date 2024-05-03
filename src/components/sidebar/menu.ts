@@ -44,5 +44,5 @@ export const MenuList = [
         name: "Sign Up",
         path: "#",
         icon: HiTable,
-    },
+    }
 ];

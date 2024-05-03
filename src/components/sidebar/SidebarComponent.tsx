@@ -29,6 +29,9 @@ export default function SideBarComponent() {
                         </Sidebar.Item>
                     ))}
                 </Sidebar.ItemGroup>
+                <Sidebar.ItemGroup>
+                    <a className='text-xl font-medium text-green-700 hover:underline hover:text-green-500' href="/">Back to home page</a>
+                </Sidebar.ItemGroup>
             </Sidebar.Items>
         </Sidebar>
     );

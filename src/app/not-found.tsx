@@ -15,11 +15,11 @@ export default function NotFound() {
                                     Looks like you&apos;ve found the doorway to the great nothing
                                 </h1>
                                 <p className="my-7 text-gray-800">
-                                    Sorry about that! Please visit our hompage to get where you
+                                    Sorry about that! Please visit our homepage to get where you
                                     need to go.
                                 </p>
-                                <Link href="/" className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 text-center bg-green-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-opacity-50">
-                                    Take me there!
+                                <Link href="/" className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 text-center bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-opacity-50">
+                                    Back to home page!
                                 </Link>
                             </div>
                         </div>

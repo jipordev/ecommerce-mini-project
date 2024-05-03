@@ -1,14 +1,19 @@
 import { Card } from "flowbite-react";
-import {ProductType} from "@/lib/defination";
+import {CartProductType, ProductType} from "@/lib/defination";
 import Image from "next/image";
 import { FaCartPlus } from "react-icons/fa6";
-import {useAppDispatch, useAppSelector} from "@/redux/hooks";
+import {useAppDispatch} from "@/redux/hooks";
 import {increment} from "@/redux/features/counter/counterSlice";
+import {addToCart} from "@/redux/features/cart/cartSlice";
 
-export default function CardProduct({id, name, price,image}: ProductType) {
+export default function CardProduct({id, name, price,image, onClick}: CartProductType) {
 
     const dispatch = useAppDispatch();
-    const count = useAppSelector((state) => state.counter.value);
+
+    const handleAddToCart = () => {
+        dispatch(increment());
+        dispatch(addToCart({id, name, image, price}));
+    }
 
     // @ts-ignore
     return (
@@ -26,7 +31,7 @@ export default function CardProduct({id, name, price,image}: ProductType) {
             <div className="flex items-center justify-between">
                 <span className="text-sm font-normal tracking-wider text-gray-900 dark:text-white">${price}</span>
                 <span className='flex justify-center items-center'>
-                    <button onClick={() => dispatch(increment())} className='font-normal rounded-lg w-max text-white text-lg px-3 py-2 bg-green-500'>
+                    <button onClick={() => {handleAddToCart()}} className='font-normal rounded-lg w-max text-white text-lg px-3 py-2 bg-green-500'>
                         <FaCartPlus />
                     </button>
                 </span>
