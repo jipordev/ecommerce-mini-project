@@ -30,7 +30,7 @@ export default function Home() {
         <main className="text-4xl flex min-h-screen flex-col items-center justify-center p-24">
             <HeroComponent/>
             <section>
-                <h1 className='font-semibold text-2xl mb-9'>Products</h1>
+                <h1 className='text-center my-9 font-semibold text-2xl'>Latest Products</h1>
                 {/* Check if data is available and not loading */}
                 {products.length > 0 && !isLoading && (
                     <>

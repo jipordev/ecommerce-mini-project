@@ -4,6 +4,7 @@ export type ProductType = {
     price: number;
     category: string;
     image: string;
+    desc:string
 };
 
 export type ProductDetail = {
@@ -11,8 +12,8 @@ export type ProductDetail = {
     name: string;
     price: number;
     desc:string;
-    category: string;
     image: string;
+    onClick?: () => void;
 }
 
 

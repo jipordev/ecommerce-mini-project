@@ -5,6 +5,7 @@ import type { RootState } from "@/redux/store";
 const initialState = {
     products: [] as CartProductType[],
     totalPrice: 0,
+    totalQty: 0,
 };
 
 const cartSlice = createSlice({
@@ -15,12 +16,12 @@ const cartSlice = createSlice({
             const productExists = state.products.some(
                 (product) => product.id === action.payload.id
             );
-            if(!productExists) {
+
+            if (!productExists) {
                 state.products.push(action.payload);
-                const price:number = parseInt(action.payload.price.toString());
+                const price = parseFloat(action.payload.price.toString());
                 state.totalPrice += price;
             }
-
         },
         removeFromCart: (state, action: PayloadAction<number>) => {
             // find product by id
@@ -32,14 +33,29 @@ const cartSlice = createSlice({
                 (product) => product.id !== action.payload
             );
         },
+        increment: (state, action: PayloadAction<number>) => {
+            const product = state.products.find(
+                (product) => product.id === action.payload
+            );
+            const price = product?.price || 0;
 
+            state.totalPrice += parseFloat(price.toString());
+        },
+        decrement: (state, action: PayloadAction<number>) => {
+            const product = state.products.find(
+                (product) => product.id === action.payload
+            );
+            const price = product?.price || 0;
+            state.totalPrice -= parseFloat(price.toString());
+        },
     },
 });
 
 // export actions
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart ,increment,decrement} = cartSlice.actions;
 export default cartSlice.reducer;
 
 // create selector
 export const selectProducts = (state: RootState) => state.cart.products;
 export const selectTotalPrice = (state: RootState) => state.cart.totalPrice;
+export const selectTotalQuantity = (state: RootState) => state.cart.totalQty;

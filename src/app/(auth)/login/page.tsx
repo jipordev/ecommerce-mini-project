@@ -1,38 +1,133 @@
-import React from 'react';
-import {Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import {useLoginMutation} from "@/redux/service/auth";
+"use client";
 
+import React, { useState } from "react";
+import style from "./style.module.css";
+
+import { IoEyeOffSharp } from "react-icons/io5";
+import { IoEyeSharp } from "react-icons/io5";
+
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import {productApi} from "@/redux/service/product";
+import Loading from "@/app/(user)/loading";
 type ValueTypes = {
-    email: string,
-    password: string,
-}
+    email: string;
+    password: string;
+};
+
 const initialValues: ValueTypes = {
     email: "",
     password: ""
-}
-const handleSubmit = (values: ValueTypes) => {
+};
 
-}
+const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string().required("Required")
+});
 
-function Login() {
+export default function Login() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+        // Toggle password visibility
+    };
 
-    const validations = Yup.object().shape({
-        email: Yup.string().email().required('Email is required'),
-        password: Yup.string().required('Password is required')
-            .min(8, "Password must be at least 8 characters long")
-            .matches(/[a-zA-Z]/, 'Password can only contain latin letter'),
-    })
+    //  handle submit
+    const handleLogin = (values: ValueTypes) => {
+        setLoading(true);
+        fetch(process.env.NEXT_PUBLIC_API_URL+`/login/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+                setLoading(false);
+            });
+    };
 
-
+    if (loading) {
+        return (
+            <div className={`${style.container}`}>
+                <h1 className="text-6xl text-center"><Loading/></h1>
+            </div>
+        );
+    }
 
     return (
-        <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}>
+        <main className={`${style.container}`}>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values, actions) => {
+                    handleLogin(values);
+                }}
+            >
+                <Form className="bg-gray-100 p-4 rounded-lg w-96">
+                    <h1 className={`${style.title}`}>Login</h1>
+                    {/* Email */}
+                    <div className="mb-5">
+                        <label className={`${style.label}`} htmlFor="email">
+                            Email
+                        </label>
+                        <Field
+                            type="email"
+                            name="email"
+                            id="email"
+                            className={`${style.input}`}
+                        />
+                        <ErrorMessage
+                            name="email"
+                            component="section"
+                            className={`${style.error}`}
+                        />
+                    </div>
 
-        </Formik>
+                    {/* Password */}
+                    <div className="mb-5">
+                        <label className={`${style.label}`} htmlFor="password">
+                            Password
+                        </label>
+                        <div className="relative">
+                            <Field
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                id="password"
+                                className={`${style.input}`}
+                            />
+                            {!showPassword ? (
+                                <IoEyeOffSharp
+                                    onClick={() => handleShowPassword()}
+                                    className="cursor-pointer absolute right-2 top-4"
+                                />
+                            ) : (
+                                <IoEyeSharp
+                                    onClick={() => handleShowPassword()}
+                                    className="cursor-pointer absolute right-2 top-4"
+                                />
+                            )}
+                        </div>
+                        <ErrorMessage
+                            name="password"
+                            component="section"
+                            className={`${style.error}`}
+                        />
+                    </div>
+
+                    {/* button submit */}
+                    <button type="submit" className={`${style.button}`}>
+                        Login
+                    </button>
+                </Form>
+            </Formik>
+        </main>
     );
 }
-
-export default Login;
