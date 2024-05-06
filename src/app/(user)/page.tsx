@@ -7,6 +7,7 @@ import { useState } from "react";
 import HeroComponent from "@/components/herosection/HeroComponent";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import HeroSectionComponent from "@/components/herosection/HeroComponent";
 
 export default function Home() {
     const [currentPage, setCurrentPage] = useState(1); // State to manage current page
@@ -28,7 +29,7 @@ export default function Home() {
 
     return (
         <main className="text-4xl flex min-h-screen flex-col items-center justify-center p-24">
-            <HeroComponent/>
+            <HeroSectionComponent/>
             <section>
                 <h1 className='text-center my-9 font-semibold text-2xl'>Latest Products</h1>
                 {/* Check if data is available and not loading */}

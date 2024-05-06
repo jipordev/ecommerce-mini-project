@@ -17,7 +17,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^11.1.7",
     "next": "14.2.3",
-    "next-auth": "^4.24.7",
+    "next-auth": "^5.0.0-beta.17",
     "react": "^18",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18",

@@ -15,6 +15,7 @@ import { Button, Modal, TextInput } from "flowbite-react";
 import Loading from "@/app/(user)/loading";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import {data} from "@formatjs/intl-localematcher/abstract/languageMatching";
+import {selectToken} from "@/redux/features/auth/authSlice";
 
 // Define your Yup validation schema
 const validationSchema = Yup.object().shape({
@@ -32,7 +33,7 @@ const FormCreateProduct = () => {
     const {data: categoryImages, isLoading: isCategoryImagesLoading} = useGetCategoryImageQuery({page: 1, pageSize: 10});
     const cateImages = categoryImages?.results;
     // Access token from Redux store
-    const accessToken = useAppSelector((state) => state.auth.token);
+    const accessToken = useAppSelector(selectToken);
     const fieldStyle = "border border-gray-300 rounded-md";
     const [openModal, setOpenModal] = useState(false);
     const emailInputRef = useRef<HTMLInputElement>(null);

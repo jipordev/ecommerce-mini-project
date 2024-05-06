@@ -5,7 +5,7 @@ import {addToCart, removeFromCart, increment, decrement} from "@/redux/features/
 import {CartProductType, ProductType} from "@/lib/defination";
 import {useAppSelector, useAppDispatch} from "@/redux/hooks";
 import {useGetProductsQuery} from "@/redux/service/product";
-import {generators} from "openid-client";
+// import {generators} from "openid-client";
 import {useState} from "react";
 
 const CartProduct = ({id, name, price, image}:CartProductType) => {
@@ -51,7 +51,6 @@ const CartProduct = ({id, name, price, image}:CartProductType) => {
                 />
             </div>
             <div className='flex flex-col justify-between my-5'>
-                <div>
                     <button className='p-1 mx-2 rounded-lg hover:bg-white hover:border-[1px]'
                             onClick={()=> {handleIncrement(id)}}
                     >
@@ -65,7 +64,6 @@ const CartProduct = ({id, name, price, image}:CartProductType) => {
                     >
                         -
                     </button>
-                </div>
                 <button
                     onClick={() => {
                         handleRemoveFromCart(id)

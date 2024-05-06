@@ -10,18 +10,22 @@ import {
     DropdownMenu,
     DropdownItem
 } from "@nextui-org/react";
-import {useGetProductsQuery} from "@/redux/service/product";
+import {useGetProductsQuery, useDeleteProductMutation} from "@/redux/service/product";
 import {IoEllipsisHorizontal} from "react-icons/io5";
 import {useRouter} from "next/navigation";
+import {defaultOverrides} from "next/dist/server/require-hook";
 
 export default function Dashboard() {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [openModal, setOpenModal] = useState(false);
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState([]);
+    const [deleteProduct] = useDeleteProductMutation();
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const {data, error, isLoading} = useGetProductsQuery({
-        page: 1, pageSize: 10
-    })
+    // @ts-ignore
+    const {data, error, isLoading} = useGetProductsQuery({})
     const router = useRouter();
 
     const [productDetail, setProductDetail] = useState<ProductType | null>(null);
@@ -44,10 +48,9 @@ export default function Dashboard() {
         "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
     );
 
-    const handleViewProduct = (product: ProductType) => {
-        setProductDetail(product);
-        setOpenModal(true);
-    };
+    const handleInputChange = (e: any) => {
+        setSearch(e.target.value)
+    }
 
     const columns: TableColumn<ProductType>[] = [
         {
@@ -131,20 +134,57 @@ export default function Dashboard() {
         }
     ];
 
+    let dataTable: ProductType[] =
+        data?.map((product: any) => ({
+            id: product.id,
+            title: product.name,
+            image: product.image,
+            price: product.price,
+            description: product.desc,
+            category: product.category,
+        })) || [];
+
+    const dataLength = dataTable.length;
+
+    useEffect(() => {
+        // @ts-ignore
+        setFilter(dataTable);
+
+        const filteredData = dataTable.filter((product) =>
+            product.name.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // @ts-ignore
+        setFilter(filteredData);
+    }, [data, search]);
     return (
         <main className="my-10 mx-[100px]">
-            <button className={`my-3 font-semibold underline text-sm px-3 py-2 rounded-lg text-green-600 hover:bg-green-600 hover:text-white `} onClick={() => router.push(`/myshop/create`)}>
-                Create New
-            </button>
+
             <DataTable
                 fixedHeader
                 progressPending={loading}
                 columns={columns}
-                data={products}
                 pagination
                 customStyles={customStyles}
+                subHeader
+                subHeaderComponent={
+                    <div>
+                        <input
+                            className=" bg-white border-[1px] px-9 py-2 w-[150px] md:w-[200px] lg:w-[300px] rounded-md"
+                            placeholder="Search"
+                            value={search}
+                            onChange={handleInputChange}
+                        ></input>
+                        <button
+                            className={`my-3 font-semibold underline text-sm px-3 py-2 rounded-lg text-green-600 hover:bg-green-600 hover:text-white `}
+                            onClick={() => router.push(`/myshop/create`)}>
+                            Create New
+                        </button>
+                    </div>
+                }
                 striped
                 highlightOnHover
+                data={filter.slice((currentPage - 1) * 10, currentPage * 10)}
             />
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <Modal.Header>Product Detial</Modal.Header>

@@ -1,10 +1,11 @@
 import React from 'react';
+import About from '@/components/card/AboutCard'
 
 function AboutUs() {
     return (
-        <main className="text-4xl flex min-h-screen flex-col items-center justify-center p-24">
+        <main className="flex min-h-screen flex-col items-center justify-center p-10">
             <h1>
-                About us page
+                <About/>
             </h1>
         </main>
     );

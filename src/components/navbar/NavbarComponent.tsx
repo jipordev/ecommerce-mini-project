@@ -1,30 +1,60 @@
 "use client";
 
-import {Navbar, NavbarCollapse, NavbarLink} from "flowbite-react";
+import {Navbar,NavbarBrand, NavbarCollapse, NavbarLink} from "flowbite-react";
 import ButtonLogin from "@/components/button/ButtonLogin";
 import Image from "next/image";
-import {useAppSelector} from "@/redux/hooks";
+import {useAppSelector, useAppDispatch} from "@/redux/hooks";
 import {useRouter} from "next/navigation";
 import {MenuList} from "./menu";
 import {useState} from "react";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
+import {selectToken, clearAccessToken} from "@/redux/features/auth/authSlice";
+import {useSession, signOut} from "next-auth/react";
+import {useGetUserProfileQuery} from "@/redux/service/user";
 
 type MenuItem = {
     name:string;
     path: string;
     active: boolean;
 }
+type UserProfile = {
+    avatar: string;
+    bio: string;
+    created_at: string;
+    updated_at: string;
+};
+
 
 export default function NavbarComponent() {
 
+    const dispatch = useAppDispatch();
+    const session = useSession();
     const router = useRouter()
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [menu, setMenu] = useState<MenuItem[]>(MenuList);
     const pathname = usePathname();
     const cart = useAppSelector((state) => state.cart.products);
     let cartLength = cart?.length;
-
-    const isLoggedIn = true;
+    const accessToken = useAppSelector(selectToken)
+    let userProfile: UserProfile;
+    const handleLogout = async () => {
+        fetch(process.env.NEXT_PUBLIC_BASE_URL_LOCALHOST + "/logout", {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify({}),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("Response data from logout", data);
+            })
+            .catch((error) => {
+                console.error("Refresh Token error:", error);
+            });
+        dispatch(clearAccessToken());
+        signOut();
+        router.push("/login");
+    };
 
     return (
         <Navbar className='bg-[whitesmoke]' >
@@ -53,6 +83,6 @@ export default function NavbarComponent() {
                     </NavbarLink>
                 ))}
             </NavbarCollapse>
-        </Navbar>
+        </Navbar >
     );
 }

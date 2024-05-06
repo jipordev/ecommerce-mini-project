@@ -8,6 +8,7 @@ import FooterComponent from "@/components/footer/FooterComponent";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import {Suspense} from "react";
 import Loading from "@/app/(user)/loading";
+import SessionWrapper from "@/app/SessionWrapper";
 import Error from "@/app/(user)/error";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,8 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+      <SessionWrapper>
+        <html lang="en">
+        <body className={inter.className}>
         <StoreProvider>
           <header className='sticky top-0'>
             <NavbarComponent/>
@@ -36,7 +38,8 @@ export default function RootLayout({
             <FooterComponent/>
           </footer>
         </StoreProvider>
-      </body>
-    </html>
+        </body>
+        </html>
+      </SessionWrapper>
   );
 }

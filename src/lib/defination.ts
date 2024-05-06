@@ -24,3 +24,8 @@ export type CartProductType = {
     id: number;
     onClick?: () => void;
 };
+
+export type PolicyType = {
+    title:string,
+    description:string
+};
