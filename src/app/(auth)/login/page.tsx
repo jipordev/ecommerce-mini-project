@@ -10,6 +10,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {productApi} from "@/redux/service/product";
 import Loading from "@/app/(user)/loading";
+import {signIn, signOut} from "@/app/Auth/auth";
+import { FcGoogle,  } from "react-icons/fc";
+import {FaGithub} from "react-icons/fa6";
 type ValueTypes = {
     email: string;
     password: string;
@@ -123,9 +126,25 @@ export default function Login() {
                     </div>
 
                     {/* button submit */}
-                    <button type="submit" className={`${style.button}`}>
-                        Login
-                    </button>
+                    <div className="flex justify-between ">
+                        <button type="submit" className={`${style.button}`}>
+                            Login
+                        </button>
+                        <div>
+                            <button
+                                className="mx-2 bg-none border-gray-300 border py-2 px-6 rounded-md mb-2"
+                                onClick={() => signIn("google")}
+                            >
+                                <FcGoogle/>
+                            </button>
+                            <button
+                                className="bg-none border-gray-300 border py-2 px-6 rounded-md mb-2"
+                                onClick={() => signIn("github")}
+                            >
+                                <FaGithub/>
+                            </button>
+                        </div>
+                    </div>
                 </Form>
             </Formik>
         </main>

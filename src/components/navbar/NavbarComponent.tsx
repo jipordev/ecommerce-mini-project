@@ -24,6 +24,8 @@ export default function NavbarComponent() {
     const cart = useAppSelector((state) => state.cart.products);
     let cartLength = cart?.length;
 
+    const isLoggedIn = true;
+
     return (
         <Navbar className='bg-[whitesmoke]' >
             <Navbar.Brand href="">

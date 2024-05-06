@@ -1,4 +1,5 @@
 import {ecommerceApi} from "../api";
+import {id} from "postcss-selector-parser";
 
 export const productApi = ecommerceApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -34,7 +35,26 @@ export const productApi = ecommerceApi.injectEndpoints({
                 method: "DELETE",
             }),
         }),
-
+        uploadProductImage: builder.mutation<any, FormData>({
+            query: (file) => ({
+                url: `/api/file/product/`,
+                method: "POST",
+                body:file
+            })
+        }),
+        uploadCategoryImage: builder.mutation<any, FormData>({
+            query: (file) => ({
+                url: `/api/file/brand/`,
+                method: "POST",
+                body: file
+            })
+        }),
+        getCategoryImage: builder.query<any, { page:number, pageSize:number }>({
+            query: ({page =1, pageSize = 10}) => `/api/file/category/?page=${page}&page_size=${pageSize}`,
+        }),
+        getProductImage: builder.query<any, {page:number , pageSize : number}>({
+            query: ({ page = 1, pageSize = 10 }) => `/api/file/product/?page=${page}&page_size=${pageSize}`,
+        })
     })
 })
 export const {
@@ -43,4 +63,8 @@ export const {
     useCreateProductMutation,
     useUpdateProductMutation,
     useDeleteProductMutation,
+    useUploadProductImageMutation,
+    useUploadCategoryImageMutation,
+    useGetCategoryImageQuery,
+    useGetProductImageQuery
 } = productApi

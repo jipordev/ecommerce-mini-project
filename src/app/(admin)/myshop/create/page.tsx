@@ -1,60 +1,116 @@
-"use client";
-import React from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+'use client'
+import {
+    useCreateProductMutation,
+    useUploadProductImageMutation,
+    useUploadCategoryImageMutation,
+    useGetProductImageQuery,
+    useGetCategoryImageQuery
+} from "@/redux/service/product";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Image from 'next/image';
-import {useCreateProductMutation} from "@/redux/service/product";
-import { useState } from 'react';
+import React, {useState, useRef} from "react";
+import { useAppSelector } from "@/redux/hooks";
+import Image from "next/image";
+import { Button, Modal, TextInput } from "flowbite-react";
+import Loading from "@/app/(user)/loading";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import {data} from "@formatjs/intl-localematcher/abstract/languageMatching";
 
-const FILE_SIZE = 1024 * 1024 * 5; // mean can store 5MB only
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
-
+// Define your Yup validation schema
 const validationSchema = Yup.object().shape({
-    image: Yup.mixed()
-        .test("fileSize", "File too large", (value: any) => {
-            if (!value) {
-                return true;
-            }
-            return value.size <= FILE_SIZE;
-        })
-        .test("fileFormat", "Unsupported Format", (value: any) => {
-            if (!value) {
-                return true;
-            }
-            return SUPPORTED_FORMATS.includes(value.type);
-        })
-        .required("Required"),
+    // Define your validation schema here
 });
 
-const fieldStyle = "border border-gray-300 rounded-md";
-
+// Component for creating a new product
 const FormCreateProduct = () => {
+    // Destructure the mutation function from the hook
+    const [createProduct] = useCreateProductMutation();
+    const [uploadProductImage] = useUploadProductImageMutation();
+    const [uploadCategoryImage] = useUploadCategoryImageMutation();
+    const {data: productImages, isLoading: isProductImagesLoading} = useGetProductImageQuery({page: 1, pageSize: 10});
+    const proImages = productImages?.results;
+    const {data: categoryImages, isLoading: isCategoryImagesLoading} = useGetCategoryImageQuery({page: 1, pageSize: 10});
+    const cateImages = categoryImages?.results;
+    // Access token from Redux store
+    const accessToken = useAppSelector((state) => state.auth.token);
+    const fieldStyle = "border border-gray-300 rounded-md";
+    const [openModal, setOpenModal] = useState(false);
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const [openCategoryModal, setOpenCategoryModal] = useState(false);
+    const [openProductModal, setOpenProductModal] = useState(false);
 
+
+    // Function to handle form submission
+    const handleSubmit = async (values: {
+        category: { name: any; icon: any; };
+        name: any;
+        desc: any;
+        image: any;
+        price: any;
+        quantity: any;
+    }, {
+                                    setSubmitting,
+                                    resetForm
+                                }: any) => {
+        try {
+
+            // Upload product image
+            const productImageResponse = await uploadProductImage(values.image);
+            // @ts-ignore
+            const productImageUrl = productImageResponse.data.url;
+
+            // Upload category image
+            const categoryImageResponse = await uploadCategoryImage(values.category.icon);
+            // @ts-ignore
+            const categoryImageUrl = categoryImageResponse.data.url;
+            // Make the API call to create a new product
+            await createProduct({
+                newProduct: {
+                    category: {
+                        name: values.category.name,
+                        icon: categoryImageUrl,
+                    },
+                    name: values.name,
+                    desc: values.desc,
+                    image: productImageUrl,
+                    price: values.price,
+                    quantity: values.quantity,
+                },
+                accessToken: `${accessToken}`, // Provide the access token
+            });
+
+            // Reset the form after successful submission
+            resetForm();
+        } catch (error) {
+            console.error("Error creating product:", error);
+        } finally {
+            // Reset the submitting state
+            setSubmitting(false);
+        }
+    };
+
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <div className="w-[700px] mx-auto h-[1000px]">
             <Formik
-                onSubmit={(values: any, { setSubmitting, resetForm }) => {
-                    console.log(values);
-                    const formData = new FormData();
-                    formData.append("image", values.image);
-                    //   handleSubmitToServer({ image: formData });
-                    setSubmitting(false);
-                    resetForm();
-                }}
+                onSubmit={handleSubmit}
                 validationSchema={validationSchema}
                 initialValues={{
                     category: {
                         name: "",
-                        icon: "",
+                        icon: undefined, // Changed to undefined for initial value
                     },
                     name: "",
                     desc: "",
-                    image: undefined,
+                    image: undefined, // Changed to undefined for initial value
                     price: 0,
                     quantity: 0,
                 }}
             >
-                {({ isSubmitting, setFieldValue }) => (
+                {({isSubmitting, setFieldValue}) => (
                     <Form className="flex m-[30px] flex-col gap-4">
                         {/* name */}
                         {/* Category Name */}
@@ -66,20 +122,9 @@ const FormCreateProduct = () => {
                                 name="category.name"
                                 type="text"
                             />
-                            <ErrorMessage name="category.name" />
+                            <ErrorMessage name="category.name"/>
                         </div>
-
-                        {/* Category Icon */}
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="category.icon">Category Icon URL:</label>
-                            <Field
-                                placeholder="Category icon URL"
-                                className={fieldStyle}
-                                name="category.icon"
-                                type="text"
-                            />
-                            <ErrorMessage name="category.icon" />
-                        </div>
+                        {/* Category Icon*/}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="name">Product Name: </label>
                             <Field
@@ -114,11 +159,8 @@ const FormCreateProduct = () => {
                                 name="price"
                                 type="number"
                             />
-                            {/* <ErrorMessage name="email">
-                {(msg) => <p className="text-red-600 text-sm italic">{msg}</p>}
-              </ErrorMessage> */}
                         </div>
-                        {/* quantity */}
+                        {/*quantity*/}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="price">Quantity: </label>
                             <Field
@@ -127,34 +169,108 @@ const FormCreateProduct = () => {
                                 name="quantity"
                                 type="number"
                             />
-                            {/* <ErrorMessage name="email">
-                {(msg) => <p className="text-red-600 text-sm italic">{msg}</p>}
-              </ErrorMessage> */}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="category.icon">Category Icon:</label>
+                            <input
+                                name="category.icon"
+                                type="file"
+                                accept="image/*" // Accept only image files
+                                onChange={(event) => {
+                                    // @ts-ignore
+                                    setFieldValue("category.icon", event.currentTarget.files[0]);
+                                }}
+                            />
+                            <ErrorMessage name="category.icon"/>
+                        </div>
+                        <Button className={`w-max`} onClick={() => setOpenCategoryModal(true)}>Select category image</Button>
+                        <Modal show={openCategoryModal} size="md" popup onClose={() => setOpenCategoryModal(false)} initialFocus={emailInputRef}>
+                            <Modal.Header/>
+                            <Modal.Body>
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">Category
+                                        Images</h3>
+                                    {isCategoryImagesLoading ? (
+                                        <div>Loading...</div>
+                                    ) : cateImages ? (
+                                        <div className="flex flex-col gap-4">
+                                            {cateImages.map((image: { id: React.Key | null | undefined; image: string | StaticImport; name: string; }) => (
+                                                // eslint-disable-next-line react/jsx-key
+                                                <button className={`p-2 hover:bg-gray-100 rounded-md`}>
+                                                    <div className={`flex justify-between items-center`}>
+                                                        <Image
+                                                            height={300}
+                                                            width={300}
+                                                            key={image.id}
+                                                            src={image.image}
+                                                            alt={image.name}
+                                                            className="w-[40px] h-auto"
+                                                        />
+                                                        <p className={`text-[12px]`}>{image.name}</p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div>No category images available</div>
+                                    )}
+                                </div>
+                            </Modal.Body>
+                        </Modal>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="image">Product Image:</label>
+                            <input
+                                name="image"
+                                type="file"
+                                accept="image/*" // Accept only image files
+                                onChange={(event) => {
+                                    // @ts-ignore
+                                    setFieldValue("image", event.currentTarget.files[0]);
+                                }}
+                            />
+                            <ErrorMessage name="image"/>
+                        </div>
+                        <Button className={`w-max`} onClick={() => setOpenProductModal(true)}>Select product image</Button>
+                        <Modal show={openProductModal} size="md" popup onClose={() => setOpenProductModal(false)} initialFocus={emailInputRef}>
+                            <Modal.Header/>
+                            <Modal.Body>
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">Product
+                                        Images</h3>
+                                    {isProductImagesLoading ? (
+                                        <div>Loading...</div>
+                                    ) : proImages ? (
+                                        <div className="flex flex-col gap-4">
+                                            {proImages.map((image: { id: React.Key | null | undefined; image: string | StaticImport; name: string; }) => (
+                                                <button className={`p-2 hover:bg-gray-100 rounded-md`}>
+                                                    <div className={`flex justify-between items-center`}>
+                                                        <Image
+                                                            height={300}
+                                                            width={300}
+                                                            key={image.id}
+                                                            src={image.image}
+                                                            alt={image.name}
+                                                            className="w-[40px] h-auto"
+                                                        />
+                                                        <p className={`text-[12px]`}>{image.name}</p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div>No product images available</div>
+                                    )}
+                                </div>
+                            </Modal.Body>
+                        </Modal>
+                        <button
+                            type="submit"
+                            className="w-max px-4 font-semibold text-sm py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+                            disabled={isSubmitting} // Disable the button while submitting
+                        >
+                            {isSubmitting ? "Creating..." : "Create"}
+                        </button>
 
-                            {/* Image  */}
-                            <div>
-                                <Field
-                                    name="image"
-                                    className={fieldStyle}
-                                    type="file"
-                                    title="Select a file"
-                                    setFieldValue={setFieldValue} // Set Formik value
-                                    component={CustomInput} // component prop used to render the custom input
-                                />
-                                <ErrorMessage name="image">
-                                    {(msg) => <div className="text-danger">{msg}</div>}
-                                </ErrorMessage>
-                            </div>
-                        </div>
-                        <div className='ml-auto'>
-                            <button
-                                type="submit"
-                                className="w-max px-4 py-3 bg-[#ff8b00] text-white rounded-lg"
-                                disabled={isSubmitting}
-                            >
-                                Create
-                            </button>
-                        </div>
                     </Form>
                 )}
             </Formik>
@@ -164,8 +280,7 @@ const FormCreateProduct = () => {
 
 export default FormCreateProduct;
 
-// custom Input
-function CustomInput({ field, form, setFieldValue, ...props }: any) {
+function CustomInput({field, form, setFieldValue, ...props}: any) {
     const [previewImage, setPreviewImage] = useState<string | undefined>(
         undefined
     );

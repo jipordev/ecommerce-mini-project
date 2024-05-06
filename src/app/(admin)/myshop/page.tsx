@@ -133,7 +133,7 @@ export default function Dashboard() {
 
     return (
         <main className="my-10 mx-[100px]">
-            <button onClick={() => router.push(`/myshop/create`)}>
+            <button className={`my-3 font-semibold underline text-sm px-3 py-2 rounded-lg text-green-600 hover:bg-green-600 hover:text-white `} onClick={() => router.push(`/myshop/create`)}>
                 Create New
             </button>
             <DataTable
