@@ -22,6 +22,7 @@ export default function Home() {
     // Check the structure of data and extract products if available
     const products = data?.results || [];
 
+
     // Handle page change
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
