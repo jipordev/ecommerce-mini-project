@@ -34,7 +34,7 @@ export default function Home() {
             <section>
                 <h1 className='text-center my-9 font-semibold text-2xl'>Latest Products</h1>
                 {/* Check if data is available and not loading */}
-                {products > 0 && !isLoading && (
+                {products && !isLoading && (
                     <>
                         <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                             {products.map((product: ProductType) => (
