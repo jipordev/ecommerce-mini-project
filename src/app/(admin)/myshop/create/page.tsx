@@ -243,6 +243,7 @@ const FormCreateProduct = () => {
                                     ) : proImages ? (
                                         <div className="flex flex-col gap-4">
                                             {proImages.map((image: { id: React.Key | null | undefined; image: string | StaticImport; name: string; }) => (
+                                                // eslint-disable-next-line react/jsx-key
                                                 <button className={`p-2 hover:bg-gray-100 rounded-md`}>
                                                     <div className={`flex justify-between items-center`}>
                                                         <Image
