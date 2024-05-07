@@ -11,7 +11,6 @@ import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {selectToken, clearAccessToken} from "@/redux/features/auth/authSlice";
 import {useSession, signOut} from "next-auth/react";
-import {useGetUserProfileQuery} from "@/redux/service/user";
 
 type MenuItem = {
     name:string;
