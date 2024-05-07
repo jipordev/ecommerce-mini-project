@@ -9,6 +9,7 @@ import {FaCartShopping} from "react-icons/fa6";
 import {addToCart } from "@/redux/features/cart/cartSlice";
 import {useAppDispatch} from "@/redux/hooks";
 import ProductDetailComponent from "@/components/card/ProductDetail";
+import {Metadata} from "next";
 
 export type ParamProps = {
     params: {
@@ -16,11 +17,12 @@ export type ParamProps = {
     };
 };
 
+
+
 function DetailPage({ params }: ParamProps) {
     const dispatch = useAppDispatch();
     const id = params.id;
     const { data:product, error, isLoading } = useGetProductByIdQuery(id);
-
     if (!product) return <div>No product found.</div>;
 
     const {name, image, price, desc} = product;
