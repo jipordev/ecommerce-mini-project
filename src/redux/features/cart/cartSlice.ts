@@ -24,7 +24,7 @@ const cartSlice = createSlice({
             }
         },
         removeFromCart: (state, action: PayloadAction<number>) => {
-            // find product by id
+            //  find product by id
             const product = state.products.find((product) => product.id === action.payload);
 
             state.totalPrice -= product?.price || 0;
