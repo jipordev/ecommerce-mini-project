@@ -11,6 +11,7 @@ export const authApi = ecommerceApi.injectEndpoints({
         }),
     })
 })
+
 export const {
     useLoginMutation
 } = authApi
